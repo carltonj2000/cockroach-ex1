@@ -6,6 +6,38 @@ The code in this repository is based on the
 [How to get started with CockroachDB - Binary, Docker and Kubernetes](https://youtu.be/79pHYplq-7c)
 video.
 
+### K8S DB Setup
+
+More details instructions and file below are at:
+
+- https://www.cockroachlabs.com/docs/v22.1/deploy-cockroachdb-with-kubernetes-insecure
+- https://github.com/cockroachdb/cockroach/blob/master/cloud/kubernetes/cockroachdb-statefulset.yaml
+
+```bash
+kind create cluster --config kind-cluster-cockroach-db.yaml
+kubectl create -f cockroachdb/statefulset.yaml
+kubectl get pods # not in running state yet
+kubectl get pv
+kubectl create -f https://raw.githubusercontent.com/cockroachdb/cockroach/master/cloud/kubernetes/cluster-init.yaml
+kubectl get job cluster-init
+kubectl get pods
+kubectl run cockroachdb -it \
+--image=cockroachdb/cockroach:v22.1.2 \
+--rm \
+--restart=Never \
+-- sql \
+--insecure \
+--host=cockroachdb-public
+```
+
+The sql prompt started in the last command above.
+Run `show databases;` to show databases.
+
+```bash
+kind get clusters
+kind delete cluster --name kind-cluster-cockroach-db
+```
+
 ### Docker DB Setup
 
 ```bash
